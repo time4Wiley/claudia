@@ -2,16 +2,14 @@ use anyhow::Result;
 use chrono;
 use dirs;
 use log::{debug, error, info, warn};
-use regex;
 use reqwest;
 use rusqlite::{params, Connection, Result as SqliteResult};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::io::{BufRead, BufReader};
 use std::process::Stdio;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use tauri::{AppHandle, Emitter, Manager, State};
-use tauri_plugin_shell::ShellExt;
 use tokio::io::{AsyncBufReadExt, BufReader as TokioBufReader};
 use tokio::process::Command;
 
@@ -1600,9 +1598,9 @@ pub async fn set_claude_binary_path(db: State<'_, AgentDb>, path: String) -> Res
 /// List all available Claude installations on the system
 #[tauri::command]
 pub async fn list_claude_installations(
-    app: AppHandle,
+    _app: AppHandle,
 ) -> Result<Vec<crate::claude_binary::ClaudeInstallation>, String> {
-    let mut installations = crate::claude_binary::discover_claude_installations();
+    let installations = crate::claude_binary::discover_claude_installations();
 
     if installations.is_empty() {
         return Err("No Claude Code installations found on the system".to_string());
